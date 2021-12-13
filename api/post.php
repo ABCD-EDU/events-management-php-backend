@@ -27,6 +27,9 @@
         case "CREATE_EVENT":
             createEvent();
             return;
+        case "REMOVE_EVENT":
+            removeEvent();
+            return;
     }
 
     function editEvent() {
@@ -87,7 +90,7 @@
                                 VALUES (:userID, :eventID)");
             $st3->bindParam(":userID", $data["userID"]);
             $st3->bindParam(":eventID", $eventID);
-                        
+
             $st3->execute();
             echo $st3->rowCount() . " records UPDATED successfully";
 
@@ -97,3 +100,27 @@
         }
     }
     
+    function removeEvent() {
+        global $data;
+        global $db;
+        echo json_encode($data);
+        $userID = (int)$data["userID"];
+        $eventID = (int)$data["eventID"];
+
+        try {
+            $st1 = $db->prepare("DELETE FROM event WHERE event_id=:eventID");
+            $st2 = $db->prepare("DELETE FROM admin_events WHERE event_id=:eventID AND user_id=:userID");
+            
+            $st1->bindParam(":eventID", $eventID);
+
+            $st2->bindParam(":eventID", $eventID);
+            $st2->bindParam(":userID", $userID);
+            
+            $st1->execute();
+            $st2->execute();
+
+            echo true;
+        }catch (PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+    }
