@@ -18,7 +18,7 @@
     $action = $_GET["action"];
 
     switch ($action) {
-        case "GET_EVENTS_BY":
+        case "GET_EVENTS":
             getEventsBy();
             return;
     }
