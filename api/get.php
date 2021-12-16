@@ -21,6 +21,9 @@
         case "GET_EVENTS":
             getEventsBy();
             return;
+        case "GET_EVENTS_UPCOMING":
+            getEventsUpcoming();
+            return;
     }
 
     function getEventsBy() {
@@ -31,6 +34,23 @@
     
         $statement = $db->prepare("SELECT * from event inner join admin_events on 
                 event.event_id = admin_events.event_id where admin_events.user_id = :id");
+    
+        $statement->bindParam(":id", $userId);
+    
+        $statement->execute();
+        $toReturn = $statement->fetchAll();
+    
+        echo json_encode($toReturn);
+    }
+
+    function getEventsUpcoming() {
+                $userId = json_decode($_GET["user_id"]);
+        
+        $database = new Database();
+        $db = $database->connect();
+    
+        $statement = $db->prepare("SELECT * from event inner join admin_events on 
+                event.event_id = admin_events.event_id where admin_events.user_id = :id and date_start>NOW()");
     
         $statement->bindParam(":id", $userId);
     
